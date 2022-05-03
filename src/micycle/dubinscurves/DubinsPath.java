@@ -31,15 +31,15 @@ public class DubinsPath {
 	 * Generates the shortest possible Dubin path between a starting and ending
 	 * configuration.
 	 * <p>
-	 * A configuration is <code>(x, y, theta)</code>, where theta is in radians,
-	 * with zero along the line x = 0 (facing east), and counter-clockwise is
-	 * positive
+	 * A configuration is <code>(x, y, theta)</code>, where theta is heading
+	 * direction in radians, with zero along the line x = 0 (facing east), and
+	 * counter-clockwise is positive
 	 * 
-	 * @segmentLengths configStart starting configuration, specified as an array of
+	 * @param configStart starting configuration, specified as an array of
 	 *                    <code>x, y, theta</code>
-	 * @segmentLengths configEnd   ending configuration, specified as an array of
+	 * @param configEnd   ending configuration, specified as an array of
 	 *                    <code>x, y, theta</code>
-	 * @segmentLengths rho         turning radius of the vehicle (forward velocity divided by
+	 * @param rho         turning radius of the vehicle (forward velocity divided by
 	 *                    maximum angular velocity)
 	 * @see #DubinsPath(double[], double[], double, DubinsPathType)
 	 */
@@ -51,10 +51,17 @@ public class DubinsPath {
 	/**
 	 * Generates a Dubin path between a starting and ending configuration, having a
 	 * specific path type; it is not neccessarily the shortest path.
+	 * <p>
+	 * A configuration is <code>(x, y, theta)</code>, where theta is heading
+	 * direction in radians, with zero along the line x = 0 (facing east), and
+	 * counter-clockwise is positive
 	 * 
-	 * @segmentLengths configStart
-	 * @segmentLengths configEnd
-	 * @segmentLengths rho
+	 * @param configStart starting configuration, specified as an array of
+	 *                    <code>x, y, theta</code>
+	 * @param configEnd   ending configuration, specified as an array of
+	 *                    <code>x, y, theta</code>
+	 * @param rho         turning radius of the vehicle (forward velocity divided by
+	 *                    maximum angular velocity)
 	 * @see #DubinsPath(double[], double[], double)
 	 */
 	public DubinsPath(double[] configStart, double[] configEnd, double rho, DubinsPathType pathType) {
@@ -72,7 +79,7 @@ public class DubinsPath {
 	/**
 	 * Finds the length of a specific segment from the path.
 	 *
-	 * @segmentLengths segment the index (0-2) of the desired segment
+	 * @param segment the index (0-2) of the desired segment
 	 */
 	public double getSegmentLength(int segment) {
 		return DubinsCurves.dubins_segment_length(this, segment);
@@ -81,7 +88,7 @@ public class DubinsPath {
 	/**
 	 * Finds the normalized length of a specific segment from the path.
 	 * 
-	 * @segmentLengths segment the index (0-2) of the desired segment
+	 * @param segment the index (0-2) of the desired segment
 	 * @return
 	 */
 	public double getNormalisedSegmentLength(int segment) {
@@ -95,7 +102,7 @@ public class DubinsPath {
 	/**
 	 * Calculates the configuration along the path, using the parameter t.
 	 * 
-	 * @segmentLengths t a length measure, where 0 <= t < length(path)
+	 * @param t a length measure, where 0 <= t < length(path)
 	 * @return <code>(x, y, theta)</code>, where theta is the gradient/tangent of
 	 *         the path at <code>(x, y)</code>
 	 */
@@ -112,8 +119,8 @@ public class DubinsPath {
 	 * The sampling process continues until the whole path is sampled, or the
 	 * callback returns a non-zero value
 	 *
-	 * @segmentLengths stepSize the distance along the path between each successive sample
-	 * @segmentLengths callback the callback function to call for each sample
+	 * @param stepSize the distance along the path between each successive sample
+	 * @param callback the callback function to call for each sample
 	 */
 	public void sampleMany(double stepSize, DubinsPathSamplingCallback callback) {
 		DubinsCurves.dubins_path_sample_many(this, stepSize, callback);
@@ -132,7 +139,7 @@ public class DubinsPath {
 	/**
 	 * Extracts a subset of the path.
 	 *
-	 * @segmentLengths t a length measure, where 0 < t < length(path)
+	 * @param t a length measure, where 0 < t < length(path)
 	 * @return a new path
 	 */
 	public DubinsPath extractSubpath(double t) {

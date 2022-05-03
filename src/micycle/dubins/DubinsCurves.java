@@ -22,22 +22,18 @@ public class DubinsCurves {
 	 * A configuration is (<code>x, y, theta</code>), where theta is in radians, with zero along
 	 * the line x = 0, and counter-clockwise is positive
 	 *
-	 * @param path - the resultant path object (mutated by method)
-	 * @param q0   - a configuration specified as an array of <code>x, y, theta</code>
-	 * @param q1   - a configuration specified as an array of <code>x, y, theta</code>
+	 * @param path - the path object to initialise into
+	 * @param q0   - starting configuration, specified as an array of <code>x, y, theta</code>
+	 * @param q1   - ending configuration, specified as an array of <code>x, y, theta</code>
 	 * @param rho  - turning radius of the vehicle (forward velocity divided by
 	 *             maximum angular velocity)
-	 * @return - non-zero on error
+	 * @return non-zero on error
 	 */
 	public static int dubins_shortest_path(DubinsPath path, double[] q0, double[] q1, double rho) {
-		int i;
-		int errcode;
 		DubinsIntermediateResults in = new DubinsIntermediateResults();
 		double[] params = new double[3];
-		double cost;
-		double best_cost = Double.MAX_VALUE;
 		DubinsPathType best_word = null;
-		errcode = dubins_intermediate_results(in, q0, q1, rho);
+		int errcode = dubins_intermediate_results(in, q0, q1, rho);
 		if (errcode != EDUBOK) {
 			return errcode;
 		}
@@ -47,10 +43,11 @@ public class DubinsCurves {
 		path.qi[2] = q0[2];
 		path.rho = rho;
 		
+		double best_cost = Double.MAX_VALUE;
 		for (DubinsPathType pathType : DubinsPathType.values()) {
 			errcode = dubins_word(in, pathType, params);
 			if (errcode == EDUBOK) {
-				cost = params[0] + params[1] + params[2];
+				double cost = params[0] + params[1] + params[2];
 				if (cost < best_cost) {
 					best_word = pathType;
 					best_cost = cost;
@@ -71,13 +68,13 @@ public class DubinsCurves {
 	 * Generate a path with a specified word from an initial configuration to a
 	 * target configuration, with a specified turning radius.
 	 *
-	 * @param path     - the resultant path
-	 * @param q0       - a configuration specified as an array of x, y, theta
-	 * @param q1       - a configuration specified as an array of x, y, theta
+	 * @param path     - the path object to initialise into
+	 * @param q0       - starting configuration specified as an array of x, y, theta
+	 * @param q1       - ending configuration specified as an array of x, y, theta
 	 * @param rho      - turning radius of the vehicle (forward velocity divided by
 	 *                 maximum angular velocity)
 	 * @param pathType - the specific path type to use
-	 * @return - non-zero on error
+	 * @return non-zero on error
 	 */
 	public static int dubins_path(DubinsPath path, double[] q0, double[] q1, double rho, DubinsPathType pathType) {
 		int errcode;

@@ -4,7 +4,7 @@ enum SegmentType {
 	L_SEG, S_SEG, R_SEG;
 }
 
-enum DubinsPathType {
+public enum DubinsPathType {
 
 	LSL(new SegmentType[] { SegmentType.L_SEG, SegmentType.S_SEG, SegmentType.L_SEG }),
 	LSR(new SegmentType[] { SegmentType.L_SEG, SegmentType.S_SEG, SegmentType.R_SEG }),

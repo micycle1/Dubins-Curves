@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>micycle</groupId>
-	<artifactId>dubins</artifactId>
-	<version>0.1</version>
-	<name>Dubins</name>
-	<description>Dubins</description>
+	<artifactId>dubins-curves</artifactId>
+	<version>2.0.1</version>
+	<name>Dubins Curves</name>
+	<description>Finds the shortest paths between configurations for the Dubins' car.</description>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<outputDirectory>target</outputDirectory>

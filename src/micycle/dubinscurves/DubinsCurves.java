@@ -1,10 +1,10 @@
-package micycle.dubins;
+package micycle.dubinscurves;
 
 /**
  * Static subroutines for Dubins curves computation.
  * <p>
  * The source code in this class is a very close port of the original C++ code,
- * preserving its "C-ish" idiosyncrasies; {@link micycle.dubins.DubinsPath
+ * preserving its "C-ish" idiosyncrasies; {@link micycle.dubinscurves.DubinsPath
  * DubinsPath} provides a object-orientated Java interface to this class, and
  * should be used instead.
  * 

@@ -1,4 +1,4 @@
-package micycle.dubins;
+package micycle.dubinscurves;
 
 /**
  * Each segment motion primitive applies a constant action over an interval of

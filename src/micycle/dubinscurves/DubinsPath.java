@@ -1,4 +1,4 @@
-package micycle.dubins;
+package micycle.dubinscurves;
 
 /**
  * A Dubins path is the shortest curve that connects two points in the 2D plane,

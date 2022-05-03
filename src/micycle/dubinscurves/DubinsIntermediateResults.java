@@ -1,4 +1,4 @@
-package micycle.dubins;
+package micycle.dubinscurves;
 
 class DubinsIntermediateResults {
 	public double alpha;

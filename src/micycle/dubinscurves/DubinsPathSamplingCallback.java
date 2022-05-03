@@ -1,4 +1,4 @@
-package micycle.dubins;
+package micycle.dubinscurves;
 
 /**
  * Callback function for path sampling

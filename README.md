@@ -3,7 +3,7 @@
 
 # Dubins-Curves
 
-This software finds the shortest paths between configurations for the Dubins' car, the forward only car-like vehicle with a constrained turning radius.
+This software finds the shortest paths between configurations for the Dubins' car, the forward-only car-like vehicle with a constrained turning radius.
 
 This a Java port of the [original C++](https://github.com/AndrewWalker/Dubins-Curves) code by Andrew Walker.
 

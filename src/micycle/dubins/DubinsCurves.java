@@ -8,22 +8,6 @@ public class DubinsCurves {
 	private static final int EDUBBADRHO = 3; // the rho value is invalid
 	private static final int EDUBNOPATH = 4; // no connection between configurations with this word
 	private static final double EPSILON = (10e-10);
-
-	enum SegmentType {
-		L_SEG, S_SEG, R_SEG;
-	}
-
-	/** The segment types for each of the Path types */
-	private static final SegmentType[][] DIRDATA = {
-		// @formatter:off
-		{ SegmentType.L_SEG, SegmentType.S_SEG, SegmentType.L_SEG },
-		{ SegmentType.L_SEG, SegmentType.S_SEG, SegmentType.R_SEG }, 
-		{ SegmentType.R_SEG, SegmentType.S_SEG, SegmentType.L_SEG },
-		{ SegmentType.R_SEG, SegmentType.S_SEG, SegmentType.R_SEG }, 
-		{ SegmentType.R_SEG, SegmentType.L_SEG, SegmentType.R_SEG },
-		{ SegmentType.L_SEG, SegmentType.R_SEG, SegmentType.L_SEG }
-		// @formatter:on
-	};
 	
 	public static DubinsPath dubins_shortest_path(double[] q0, double[] q1, double rho) {
 		DubinsPath path = new DubinsPath();
@@ -52,7 +36,7 @@ public class DubinsCurves {
 		double[] params = new double[3];
 		double cost;
 		double best_cost = Double.MAX_VALUE;
-		int best_word = -1;
+		DubinsPathType best_word = null;
 		errcode = dubins_intermediate_results(in, q0, q1, rho);
 		if (errcode != EDUBOK) {
 			return errcode;
@@ -62,14 +46,13 @@ public class DubinsCurves {
 		path.qi[1] = q0[1];
 		path.qi[2] = q0[2];
 		path.rho = rho;
-
-		for (i = 0; i < 6; i++) {
-			DubinsPathType pathType = DubinsPathType.forValue(i);
+		
+		for (DubinsPathType pathType : DubinsPathType.values()) {
 			errcode = dubins_word(in, pathType, params);
 			if (errcode == EDUBOK) {
 				cost = params[0] + params[1] + params[2];
 				if (cost < best_cost) {
-					best_word = i;
+					best_word = pathType;
 					best_cost = cost;
 					path.param[0] = params[0];
 					path.param[1] = params[1];
@@ -78,7 +61,7 @@ public class DubinsCurves {
 				}
 			}
 		}
-		if (best_word == -1) {
+		if (best_word == null) {
 			return EDUBNOPATH;
 		}
 		return EDUBOK;
@@ -181,7 +164,7 @@ public class DubinsCurves {
 		double[] qi = new double[3]; // The translated initial configuration
 		double[] q1 = new double[3]; // end-of segment 1
 		double[] q2 = new double[3]; // end-of segment 2
-		SegmentType[] types = DIRDATA[path.type.getValue()];
+		SegmentType[] types = path.type.getValue();
 		double p1;
 		double p2;
 

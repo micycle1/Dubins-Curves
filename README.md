@@ -14,7 +14,7 @@ This a Java port of the [original C++](https://github.com/AndrewWalker/Dubins-Cu
 ## Usage
 
 ### Maven/Gradle
-This repository is hosted as a Maven artifact via [Jitpack](https://jitpack.io/#micycle1/Dubins-Curves).
+This repository is hosted as a Maven/Gradle artifact via [Jitpack](https://jitpack.io/#micycle1/Dubins-Curves).
 
 ### Example
 
@@ -44,3 +44,8 @@ public class DubinsDemo {
 ```
 
 ## Illustrations
+
+<p float="middle">
+  <a href="examples/textOffsetCurves"><img src="resources/dubins2.gif" alt="" width="30%"/></a>
+  <a href="examples/partitionSmooth"><img src="resources/dubins.gif" alt="" width=30%/></a>
+</p>

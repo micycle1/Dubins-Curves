@@ -1,6 +1,18 @@
 package micycle.dubins;
 
-public class DubinsCurves {
+/**
+ * Static subroutines for Dubins curves computation.
+ * <p>
+ * The source code in this class is a very close port of the original C++ code,
+ * preserving its "C-ish" idiosyncrasies; {@link micycle.dubins.DubinsPath
+ * DubinsPath} provides a object-orientated Java interface to this class, and
+ * should be used instead.
+ * 
+ * @author Michael Carleton
+ * @author Andrew Walker
+ *
+ */
+class DubinsCurves {
 
 	private static final int EDUBOK = 0; // No error
 	private static final int EDUBCOCONFIGS = 1; // Colocated configurations
@@ -8,28 +20,24 @@ public class DubinsCurves {
 	private static final int EDUBBADRHO = 3; // the rho value is invalid
 	private static final int EDUBNOPATH = 4; // no connection between configurations with this word
 	private static final double EPSILON = (10e-10);
-	
-	public static DubinsPath dubins_shortest_path(double[] q0, double[] q1, double rho) {
-		DubinsPath path = new DubinsPath();
-		dubins_shortest_path(path, q0, q1, rho);
-		return path;
-	}
 
 	/**
 	 * Generate a path from an initial configuration to a target configuration, with
 	 * a specified maximum turning radii.
 	 * <p>
-	 * A configuration is (<code>x, y, theta</code>), where theta is in radians, with zero along
-	 * the line x = 0, and counter-clockwise is positive
+	 * A configuration is (<code>x, y, theta</code>), where theta is in radians,
+	 * with zero along the line x = 0, and counter-clockwise is positive
 	 *
-	 * @param path - the path object to initialise into
-	 * @param q0   - starting configuration, specified as an array of <code>x, y, theta</code>
-	 * @param q1   - ending configuration, specified as an array of <code>x, y, theta</code>
-	 * @param rho  - turning radius of the vehicle (forward velocity divided by
+	 * @segmentLengths path - the path object to initialise into
+	 * @segmentLengths q0   - starting configuration, specified as an array of
+	 *             <code>x, y, theta</code>
+	 * @segmentLengths q1   - ending configuration, specified as an array of
+	 *             <code>x, y, theta</code>
+	 * @segmentLengths rho  - turning radius of the vehicle (forward velocity divided by
 	 *             maximum angular velocity)
 	 * @return non-zero on error
 	 */
-	public static int dubins_shortest_path(DubinsPath path, double[] q0, double[] q1, double rho) {
+	static int dubins_shortest_path(DubinsPath path, double[] q0, double[] q1, double rho) {
 		DubinsIntermediateResults in = new DubinsIntermediateResults();
 		double[] params = new double[3];
 		DubinsPathType best_word = null;
@@ -38,11 +46,11 @@ public class DubinsCurves {
 			return errcode;
 		}
 
-		path.qi[0] = q0[0];
-		path.qi[1] = q0[1];
-		path.qi[2] = q0[2];
+		path.configStart[0] = q0[0];
+		path.configStart[1] = q0[1];
+		path.configStart[2] = q0[2];
 		path.rho = rho;
-		
+
 		double best_cost = Double.MAX_VALUE;
 		for (DubinsPathType pathType : DubinsPathType.values()) {
 			errcode = dubins_word(in, pathType, params);
@@ -51,9 +59,9 @@ public class DubinsCurves {
 				if (cost < best_cost) {
 					best_word = pathType;
 					best_cost = cost;
-					path.param[0] = params[0];
-					path.param[1] = params[1];
-					path.param[2] = params[2];
+					path.segmentLengths[0] = params[0];
+					path.segmentLengths[1] = params[1];
+					path.segmentLengths[2] = params[2];
 					path.type = pathType;
 				}
 			}
@@ -68,15 +76,15 @@ public class DubinsCurves {
 	 * Generate a path with a specified word from an initial configuration to a
 	 * target configuration, with a specified turning radius.
 	 *
-	 * @param path     - the path object to initialise into
-	 * @param q0       - starting configuration specified as an array of x, y, theta
-	 * @param q1       - ending configuration specified as an array of x, y, theta
-	 * @param rho      - turning radius of the vehicle (forward velocity divided by
+	 * @segmentLengths path     - the path object to initialise into
+	 * @segmentLengths q0       - starting configuration specified as an array of x, y, theta
+	 * @segmentLengths q1       - ending configuration specified as an array of x, y, theta
+	 * @segmentLengths rho      - turning radius of the vehicle (forward velocity divided by
 	 *                 maximum angular velocity)
-	 * @param pathType - the specific path type to use
+	 * @segmentLengths pathType - the specific path type to use
 	 * @return non-zero on error
 	 */
-	public static int dubins_path(DubinsPath path, double[] q0, double[] q1, double rho, DubinsPathType pathType) {
+	static int dubins_path(DubinsPath path, double[] q0, double[] q1, double rho, DubinsPathType pathType) {
 		int errcode;
 		DubinsIntermediateResults in = new DubinsIntermediateResults();
 		errcode = dubins_intermediate_results(in, q0, q1, rho);
@@ -84,12 +92,12 @@ public class DubinsCurves {
 			double[] params = new double[3];
 			errcode = dubins_word(in, pathType, params);
 			if (errcode == EDUBOK) {
-				path.param[0] = params[0];
-				path.param[1] = params[1];
-				path.param[2] = params[2];
-				path.qi[0] = q0[0];
-				path.qi[1] = q0[1];
-				path.qi[2] = q0[2];
+				path.segmentLengths[0] = params[0];
+				path.segmentLengths[1] = params[1];
+				path.segmentLengths[2] = params[2];
+				path.configStart[0] = q0[0];
+				path.configStart[1] = q0[1];
+				path.configStart[2] = q0[2];
 				path.rho = rho;
 				path.type = pathType;
 			}
@@ -100,13 +108,13 @@ public class DubinsCurves {
 	/**
 	 * Calculate the length of an initialised path.
 	 *
-	 * @param path - the path to find the length of
+	 * @segmentLengths path - the path to find the length of
 	 */
-	public static double dubins_path_length(DubinsPath path) {
+	static double dubins_path_length(DubinsPath path) {
 		double length = 0.0;
-		length += path.param[0];
-		length += path.param[1];
-		length += path.param[2];
+		length += path.segmentLengths[0];
+		length += path.segmentLengths[1];
+		length += path.segmentLengths[2];
 		length = length * path.rho;
 		return length;
 	}
@@ -114,48 +122,48 @@ public class DubinsCurves {
 	/**
 	 * Return the length of a specific segment in an initialized path.
 	 *
-	 * @param path - the path to find the length of
-	 * @param i    - the segment you to get the length of (0-2)
+	 * @segmentLengths path - the path to find the length of
+	 * @segmentLengths i    - the segment you to get the length of (0-2)
 	 */
-	public static double dubins_segment_length(DubinsPath path, int i) {
+	static double dubins_segment_length(DubinsPath path, int i) {
 		if ((i < 0) || (i > 2)) {
 			return Double.MAX_VALUE;
 		}
-		return path.param[i] * path.rho;
+		return path.segmentLengths[i] * path.rho;
 	}
 
 	/**
 	 * Return the normalized length of a specific segment in an initialized path.
 	 *
-	 * @param path - the path to find the length of
-	 * @param i    - the segment you to get the length of (0-2)
+	 * @segmentLengths path - the path to find the length of
+	 * @segmentLengths i    - the segment you to get the length of (0-2)
 	 */
-	public static double dubins_segment_length_normalized(DubinsPath path, int i) {
+	static double dubins_segment_length_normalized(DubinsPath path, int i) {
 		if ((i < 0) || (i > 2)) {
 			return Double.MAX_VALUE;
 		}
-		return path.param[i];
+		return path.segmentLengths[i];
 	}
 
 	/**
 	 * Extract an integer that represents which path type was used.
 	 *
-	 * @param path - an initialised path
+	 * @segmentLengths path - an initialised path
 	 * @return - one of LSL, LSR, RSL, RSR, RLR or LRL
 	 */
-	public static DubinsPathType dubins_path_type(DubinsPath path) {
+	static DubinsPathType dubins_path_type(DubinsPath path) {
 		return path.type;
 	}
 
 	/**
 	 * Calculate the configuration along the path, using the parameter t.
 	 *
-	 * @param path - an initialised path
-	 * @param t    - a length measure, where 0 <= t < dubins_path_length(path)
-	 * @param q    - the configuration result
+	 * @segmentLengths path - an initialised path
+	 * @segmentLengths t    - a length measure, where 0 <= t < dubins_path_length(path)
+	 * @segmentLengths q    - the configuration result
 	 * @returns - non-zero if 't' is not in the correct range
 	 */
-	public static int dubins_path_sample(DubinsPath path, double t, double[] q) {
+	static int dubins_path_sample(DubinsPath path, double t, double[] q) {
 		/* tprime is the normalised variant of the parameter t */
 		double tprime = t / path.rho;
 		double[] qi = new double[3]; // The translated initial configuration
@@ -172,11 +180,11 @@ public class DubinsCurves {
 		/* initial configuration */
 		qi[0] = 0.0;
 		qi[1] = 0.0;
-		qi[2] = path.qi[2];
+		qi[2] = path.configStart[2];
 
 		/* generate the target configuration */
-		p1 = path.param[0];
-		p2 = path.param[1];
+		p1 = path.segmentLengths[0];
+		p2 = path.segmentLengths[1];
 		dubins_segment(p1, qi, q1, types[0]);
 		dubins_segment(p2, q1, q2, types[1]);
 		if (tprime < p1) {
@@ -190,8 +198,8 @@ public class DubinsCurves {
 		/*
 		 * scale the target configuration, translate back to the original starting point
 		 */
-		q[0] = q[0] * path.rho + path.qi[0];
-		q[1] = q[1] * path.rho + path.qi[1];
+		q[0] = q[0] * path.rho + path.configStart[0];
+		q[1] = q[1] * path.rho + path.configStart[1];
 		q[2] = mod2pi(q[2]);
 
 		return EDUBOK;
@@ -204,21 +212,21 @@ public class DubinsCurves {
 	 * The sampling process continues until the whole path is sampled, or the
 	 * callback returns a non-zero value
 	 *
-	 * @param path      - the path to sample
-	 * @param stepSize  - the distance along the path for subsequent samples
-	 * @param cb        - the callback function to call for each sample
-	 * @param user_data - optional information to pass on to the callback
+	 * @segmentLengths path      - the path to sample
+	 * @segmentLengths stepSize  - the distance along the path for subsequent samples
+	 * @segmentLengths cb        - the callback function to call for each sample
+	 * @segmentLengths user_data - optional information to pass on to the callback
 	 *
 	 * @returns - zero on successful completion, or the result of the callback
 	 */
-	public static int dubins_path_sample_many(DubinsPath path, double stepSize, DubinsPathSamplingCallback cb, Object user_data) {
+	static int dubins_path_sample_many(DubinsPath path, double stepSize, DubinsPathSamplingCallback cb) {
 		int retcode;
 		double[] q = new double[3];
 		double x = 0.0;
 		double length = dubins_path_length(path);
 		while (x < length) {
 			dubins_path_sample(path, x, q);
-			retcode = cb.invoke(q, x, user_data);
+			retcode = cb.invoke(q, x);
 			if (retcode != 0) {
 				return retcode;
 			}
@@ -230,21 +238,21 @@ public class DubinsCurves {
 	/**
 	 * Convenience function to identify the endpoint of a path.
 	 *
-	 * @param path - an initialised path
-	 * @param q    - the configuration result
+	 * @segmentLengths path - an initialised path
+	 * @segmentLengths q    - the configuration result
 	 */
-	public static int dubins_path_endpoint(DubinsPath path, double[] q) {
+	static int dubins_path_endpoint(DubinsPath path, double[] q) {
 		return dubins_path_sample(path, dubins_path_length(path) - EPSILON, q);
 	}
 
 	/**
 	 * Convenience function to extract a subset of a path.
 	 *
-	 * @param path    - an initialised path
-	 * @param t       - a length measure, where 0 < t < dubins_path_length(path)
-	 * @param newpath - the resultant path
+	 * @segmentLengths path    - an initialised path
+	 * @segmentLengths t       - a length measure, where 0 < t < dubins_path_length(path)
+	 * @segmentLengths newpath - the resultant path
 	 */
-	private static int dubins_extract_subpath(DubinsPath path, double t, DubinsPath newpath) {
+	static int dubins_extract_subpath(DubinsPath path, double t, DubinsPath newpath) {
 		/* calculate the true parameter */
 		double tprime = t / path.rho;
 
@@ -253,16 +261,16 @@ public class DubinsCurves {
 		}
 
 		/* copy most of the data */
-		newpath.qi[0] = path.qi[0];
-		newpath.qi[1] = path.qi[1];
-		newpath.qi[2] = path.qi[2];
+		newpath.configStart[0] = path.configStart[0];
+		newpath.configStart[1] = path.configStart[1];
+		newpath.configStart[2] = path.configStart[2];
 		newpath.rho = path.rho;
 		newpath.type = path.type;
 
 		/* fix the parameters */
-		newpath.param[0] = Math.min(path.param[0], tprime);
-		newpath.param[1] = Math.min(path.param[1], tprime - newpath.param[0]);
-		newpath.param[2] = Math.min(path.param[2], tprime - newpath.param[0] - newpath.param[1]);
+		newpath.segmentLengths[0] = Math.min(path.segmentLengths[0], tprime);
+		newpath.segmentLengths[1] = Math.min(path.segmentLengths[1], tprime - newpath.segmentLengths[0]);
+		newpath.segmentLengths[2] = Math.min(path.segmentLengths[2], tprime - newpath.segmentLengths[0] - newpath.segmentLengths[1]);
 		return 0;
 	}
 
@@ -329,14 +337,6 @@ public class DubinsCurves {
 		in.d_sq = d * d;
 
 		return EDUBOK;
-	}
-
-	private static double floorMod(double x, double y) {
-		return x - y * Math.floor(x / y);
-	}
-
-	private static double mod2pi(double theta) {
-		return floorMod(theta, 2 * Math.PI);
 	}
 
 	private static void dubins_segment(double t, double[] qi, double[] qt, SegmentType type) {
@@ -443,6 +443,14 @@ public class DubinsCurves {
 			return EDUBOK;
 		}
 		return EDUBNOPATH;
+	}
+
+	private static double floorMod(double x, double y) {
+		return x - y * Math.floor(x / y);
+	}
+
+	private static double mod2pi(double theta) {
+		return floorMod(theta, 2 * Math.PI);
 	}
 
 }

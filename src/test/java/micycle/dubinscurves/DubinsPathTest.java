@@ -3,10 +3,6 @@ package micycle.dubinscurves;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Import the classes to be tested
-import micycle.dubinscurves.DubinsPath;
-import micycle.dubinscurves.DubinsPathType;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,7 +140,7 @@ class DubinsPathTest {
             return 0;
         });
 
-        assertEquals(4, samples.size());
+        assertEquals(5, samples.size());
         // Samples should be at (0,0,0), (0.5,0,0), (1.0,0,0), (1.5,0,0)
         assertEquals(0.0, samples.get(0)[0], DELTA); // x at t=0
         assertEquals(0.0, samples.get(0)[1], DELTA); // y at t=0

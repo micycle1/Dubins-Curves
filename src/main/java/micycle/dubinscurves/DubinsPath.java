@@ -13,7 +13,7 @@ package micycle.dubinscurves;
  * <p>
  * This class is the primary user-facing API for working with Dubins paths. It
  * provides methods to generate, sample, and query properties of these paths.
- * 
+ *
  * @author Michael Carleton
  */
 public class DubinsPath {
@@ -37,7 +37,7 @@ public class DubinsPath {
 	/**
 	 * The type of the Dubins path (e.g., LSL, RSR). Populated by the underlying
 	 * DubinsCurves library.
-	 * 
+	 *
 	 * @see DubinsPathType
 	 */
 	DubinsPathType type; // package-private for direct access by DubinsCurves
@@ -58,7 +58,7 @@ public class DubinsPath {
 	 * orientation (heading) in radians. A heading of 0 corresponds to movement
 	 * along the positive x-axis (East), and positive angles indicate
 	 * counter-clockwise rotation.
-	 * 
+	 *
 	 * @param configStart The starting configuration <code>[x, y, theta]</code>.
 	 * @param configEnd   The ending configuration <code>[x, y, theta]</code>.
 	 * @param rho         The turning radius of the vehicle. Must be a positive
@@ -66,7 +66,7 @@ public class DubinsPath {
 	 *                    maximum angular velocity).
 	 * @see #DubinsPath(double[], double[], double, DubinsPathType)
 	 */
-	public DubinsPath(double[] configStart, double[] configEnd, double rho) {
+	public DubinsPath(final double[] configStart, final double[] configEnd, final double rho) {
 		this(); // Initialize internal fields
 		// This call populates this DubinsPath object with the shortest path details
 		DubinsCurves.dubins_shortest_path(this, configStart, configEnd, rho);
@@ -81,7 +81,7 @@ public class DubinsPath {
 	 * orientation (heading) in radians. A heading of 0 corresponds to movement
 	 * along the positive x-axis (East), and positive angles indicate
 	 * counter-clockwise rotation.
-	 * 
+	 *
 	 * @param configStart The starting configuration <code>[x, y, theta]</code>.
 	 * @param configEnd   The ending configuration <code>[x, y, theta]</code>.
 	 * @param rho         The turning radius of the vehicle. Must be a positive
@@ -91,7 +91,7 @@ public class DubinsPath {
 	 *                    LSL, RSR).
 	 * @see #DubinsPath(double[], double[], double)
 	 */
-	public DubinsPath(double[] configStart, double[] configEnd, double rho, DubinsPathType pathType) {
+	public DubinsPath(final double[] configStart, final double[] configEnd, final double rho, final DubinsPathType pathType) {
 		this(); // Initialize internal fields
 		// This call populates this DubinsPath object with the specified path type
 		// details
@@ -118,7 +118,7 @@ public class DubinsPath {
 	 *         is invalid, though behavior for invalid indices primarily depends on
 	 *         the underlying C library.
 	 */
-	public double getSegmentLength(int segment) {
+	public double getSegmentLength(final int segment) {
 		return DubinsCurves.dubins_segment_length(this, segment);
 	}
 
@@ -127,13 +127,13 @@ public class DubinsPath {
 	 * normalized length is the segment length before being scaled by the turning
 	 * radius <code>rho</code>. To get the actual length, multiply this value by
 	 * <code>rho</code>.
-	 * 
+	 *
 	 * @param segment The index of the segment (0, 1, or 2). 0: first segment, 1:
 	 *                second segment, 2: third segment.
 	 * @return The normalized length of the specified segment.
 	 * @see #getSegmentLength(int)
 	 */
-	public double getNormalisedSegmentLength(int segment) {
+	public double getNormalisedSegmentLength(final int segment) {
 		// This corresponds to the values stored in the internal segmentLengths array.
 		return DubinsCurves.dubins_segment_length_normalized(this, segment);
 	}
@@ -152,7 +152,7 @@ public class DubinsPath {
 	/**
 	 * Calculates the configuration (position and heading) at a specific distance
 	 * along the path.
-	 * 
+	 *
 	 * @param t The distance along the path from the starting configuration. Must be
 	 *          non-negative and less than or equal to the total path length. If
 	 *          <code>t</code> is outside this range, the behavior is defined by the
@@ -160,8 +160,8 @@ public class DubinsPath {
 	 * @return A <code>double[3]</code> array representing the configuration
 	 *         <code>[x, y, theta]</code> at distance <code>t</code> along the path.
 	 */
-	public double[] sample(double t) {
-		double[] q = new double[3];
+	public double[] sample(final double t) {
+		final double[] q = new double[3];
 		DubinsCurves.dubins_path_sample(this, t, q);
 		return q;
 	}
@@ -184,7 +184,7 @@ public class DubinsPath {
 	 *                 cumulative distance <code>t</code> along the path. If the
 	 *                 callback returns a non-zero integer, sampling is halted.
 	 */
-	public void sampleMany(double stepSize, DubinsPathSamplingCallback callback) {
+	public void sampleMany(final double stepSize, final DubinsPathSamplingCallback callback) {
 		DubinsCurves.dubins_path_sample_many(this, stepSize, callback);
 	}
 
@@ -192,12 +192,12 @@ public class DubinsPath {
 	 * Returns the final configuration <code>[x, y, theta]</code> at the endpoint of
 	 * the path. This should be identical to the <code>configEnd</code> provided to
 	 * the constructor if the path was successfully computed.
-	 * 
+	 *
 	 * @return A <code>double[3]</code> array representing the final configuration
 	 *         <code>[x, y, theta]</code>.
 	 */
 	public double[] getEndpoint() {
-		double[] endpoint = new double[3];
+		final double[] endpoint = new double[3];
 		DubinsCurves.dubins_path_endpoint(this, endpoint);
 		return endpoint;
 	}
@@ -214,8 +214,8 @@ public class DubinsPath {
 	 *          original path.
 	 * @return A new {@link DubinsPath} object representing the extracted sub-path.
 	 */
-	public DubinsPath extractSubpath(double t) {
-		DubinsPath extract = new DubinsPath(); // Create a new path object to be populated
+	public DubinsPath extractSubpath(final double t) {
+		final DubinsPath extract = new DubinsPath(); // Create a new path object to be populated
 		// This call populates 'extract' with the sub-path details
 		DubinsCurves.dubins_extract_subpath(this, t, extract);
 		return extract;

@@ -46,6 +46,9 @@ public class DubinsDemo {
 ## Illustrations
 
 <p float="middle">
-  <a href="examples/textOffsetCurves"><img src="resources/dubins2.gif" alt="" width="30%"/></a>
-  <a href="examples/partitionSmooth"><img src="resources/dubins.gif" alt="" width=30%/></a>
+  <img src="resources/dubins2.gif" alt="Dubins Path Example 1" width="30%"/>
+  <img src="resources/dubins.gif" alt="Dubins Path Example 2" width="30%"/>
 </p>
+
+## Testing
+This library includes a comprehensive suite of unit tests built with JUnit 5 to ensure the correctness of path calculations and core functionalities. These tests cover various path types, edge cases, and sampling methods.
